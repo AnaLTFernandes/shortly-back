@@ -1,7 +1,9 @@
+import loginSchema from "../schemas/login.schema.js";
 import userSchema from "../schemas/user.schema.js";
 
 const schemas = {
 	userSchema,
+	loginSchema,
 };
 
 function validateFields(data, schemaName) {

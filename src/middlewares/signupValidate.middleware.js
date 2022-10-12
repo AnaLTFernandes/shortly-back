@@ -1,6 +1,6 @@
 import connection from "../database/db.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
-import validateFields from "./validateFields.middleware.js";
+import validateFields from "./validateFields.js";
 
 async function signUpValidate(req, res, next) {
 	const { name, email, password, confirmPassword } = req.body;
