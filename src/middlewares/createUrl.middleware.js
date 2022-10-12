@@ -1,11 +1,8 @@
 import connection from "../database/db.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
-const emailRegex = new RegExp(
-	`(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]
-    \.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]
-    \.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+
-    \.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})`
+const urlRegex = new RegExp(
+	/^https?:\/\/(?:www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
 );
 
 async function urlValidate(req, res, next) {
@@ -14,13 +11,11 @@ async function urlValidate(req, res, next) {
 
 	if (!token) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
 
-	if (!url || !url?.match(emailRegex)) {
+	if (!url || !url?.match(urlRegex)) {
 		return res
 			.status(STATUS_CODE.UNPROCESSABLE_ENTITY)
 			.send({ message: "Url inválida." });
 	}
-
-	url = url.match(emailRegex)[0];
 
 	let session;
 

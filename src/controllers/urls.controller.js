@@ -41,10 +41,45 @@ async function getUrl(req, res) {
 
 	if (!url) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
-    delete url.userId;
-    delete url.createdAt;
+	delete url.userId;
+	delete url.createdAt;
 
 	res.status(STATUS_CODE.OK).send(url);
 }
 
-export { createUrl, getUrl };
+async function openUrl(req, res) {
+	const { shortUrl } = req.params;
+
+	let url;
+
+	try {
+		url = (
+			await connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1`, [
+				shortUrl,
+			])
+		).rows[0];
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (!url) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+	try {
+		await connection.query(
+			`INSERT INTO
+                visits
+            ("userId", "urlId")
+            VALUES ($1, $2)
+            `,
+			[url.userId, url.id]
+		);
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	res.redirect(url.url);
+}
+
+export { createUrl, getUrl, openUrl };
