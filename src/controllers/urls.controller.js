@@ -82,4 +82,17 @@ async function openUrl(req, res) {
 	res.redirect(url.url);
 }
 
-export { createUrl, getUrl, openUrl };
+async function deleteUrl(req, res) {
+	const { id } = res.locals;
+
+	try {
+		await connection.query(`DELETE FROM urls WHERE id = $1`, [id]);
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	res.sendStatus(STATUS_CODE.NO_CONTENT);
+}
+
+export { createUrl, getUrl, openUrl, deleteUrl };
