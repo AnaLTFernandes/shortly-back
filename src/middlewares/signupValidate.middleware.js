@@ -21,7 +21,10 @@ async function signUpValidate(req, res, next) {
 			[email]
 		);
 
-		if (hasEmail.rows[0]) return res.sendStatus(STATUS_CODE.CONFLICT);
+		if (hasEmail.rows[0])
+			return res
+				.status(STATUS_CODE.CONFLICT)
+				.send({ message: "Usuário já existe." });
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
