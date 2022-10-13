@@ -45,4 +45,42 @@ async function signIn(req, res) {
 	res.status(STATUS_CODE.OK).send({ token });
 }
 
-export { signUp, signIn };
+async function Logout(req, res) {
+	const token = req.headers.authorization?.replace("Bearer ", "");
+
+	if (!token) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
+
+	let session;
+
+	try {
+		session = (
+			await connection.query(
+				`SELECT
+                    *
+                FROM sessions
+                WHERE token = $1
+                    AND active = TRUE;`,
+				[token]
+			)
+		)?.rows[0];
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (!session) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
+
+	try {
+		await connection.query(
+			`UPDATE sessions SET active = FALSE WHERE token = $1;`,
+			[session.token]
+		);
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	res.sendStatus(STATUS_CODE.OK);
+}
+
+export { signUp, signIn, Logout };
