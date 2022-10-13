@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth.router.js";
-import UrlRouter from "./routes/urls.router.js";
+import urlRouter from "./routes/urls.router.js";
+import userRouter from "./routes/users.router.js";
 
 dotenv.config();
 
@@ -12,7 +13,8 @@ server.use(express.json());
 server.use(cors());
 
 server.use(authRouter);
-server.use(UrlRouter);
+server.use(urlRouter);
+server.use(userRouter);
 
 server.get("/status", (req, res) => {
 	res.sendStatus(200);

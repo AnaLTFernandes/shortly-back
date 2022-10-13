@@ -20,7 +20,7 @@ async function signInValidate(req, res, next) {
 
 	try {
 		user = (
-			await connection.query(`SELECT * FROM users WHERE email = $1`, [email])
+			await connection.query(`SELECT * FROM users WHERE email = $1;`, [email])
 		)?.rows[0];
 	} catch (error) {
 		console.log(error);
@@ -46,7 +46,7 @@ async function signInValidate(req, res, next) {
 			await connection.query(
 				`SELECT * FROM sessions
                 WHERE active = TRUE
-                    AND "userId" = $1`,
+                    AND "userId" = $1;`,
 				[user.id]
 			)
 		)?.rows[0];

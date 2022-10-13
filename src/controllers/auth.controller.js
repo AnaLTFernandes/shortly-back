@@ -10,11 +10,10 @@ async function signUp(req, res) {
 
 	try {
 		await connection.query(
-			`
-            INSERT INTO
+			`INSERT INTO
                 users
             (name, email, password)
-            VALUES ($1, $2, $3)`,
+            VALUES ($1, $2, $3);`,
 			[name, email, passwordHash]
 		);
 	} catch (error) {
@@ -32,11 +31,10 @@ async function signIn(req, res) {
 
 	try {
 		await connection.query(
-			`
-            INSERT INTO
+			`INSERT INTO
                 sessions
             ("userId", token)
-            VALUES ($1, $2)`,
+            VALUES ($1, $2);`,
 			[id, token]
 		);
 	} catch (error) {

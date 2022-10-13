@@ -17,7 +17,7 @@ async function signUpValidate(req, res, next) {
 
 	try {
 		const hasEmail = await connection.query(
-			`SELECT * FROM users WHERE email = $1`,
+			`SELECT * FROM users WHERE email = $1;`,
 			[email]
 		);
 

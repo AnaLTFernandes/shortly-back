@@ -22,7 +22,7 @@ async function urlValidate(req, res, next) {
 	try {
 		session = (
 			await connection.query(
-				`SELECT * FROM sessions WHERE token = $1 AND active = TRUE`,
+				`SELECT * FROM sessions WHERE token = $1 AND active = TRUE;`,
 				[token]
 			)
 		)?.rows[0];

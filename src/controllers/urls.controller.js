@@ -9,11 +9,10 @@ async function createUrl(req, res) {
 
 	try {
 		await connection.query(
-			`
-            INSERT INTO
+			`INSERT INTO
                 urls
             ("userId", "shortUrl", url)
-            VALUES ($1, $2, $3)`,
+            VALUES ($1, $2, $3);`,
 			[user, shortUrl, url]
 		);
 	} catch (error) {
@@ -32,8 +31,8 @@ async function getUrl(req, res) {
 	let url;
 
 	try {
-		url = (await connection.query(`SELECT * FROM urls WHERE id = $1`, [id]))
-			.rows[0];
+		url = (await connection.query(`SELECT * FROM urls WHERE id = $1;`, [id]))
+			?.rows[0];
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -54,10 +53,10 @@ async function openUrl(req, res) {
 
 	try {
 		url = (
-			await connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1`, [
+			await connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1;`, [
 				shortUrl,
 			])
-		).rows[0];
+		)?.rows[0];
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -70,8 +69,7 @@ async function openUrl(req, res) {
 			`INSERT INTO
                 visits
             ("userId", "urlId")
-            VALUES ($1, $2)
-            `,
+            VALUES ($1, $2);`,
 			[url.userId, url.id]
 		);
 	} catch (error) {
@@ -86,7 +84,7 @@ async function deleteUrl(req, res) {
 	const { id } = res.locals;
 
 	try {
-		await connection.query(`DELETE FROM urls WHERE id = $1`, [id]);
+		await connection.query(`DELETE FROM urls WHERE id = $1;`, [id]);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);

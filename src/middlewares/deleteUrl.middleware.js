@@ -14,7 +14,7 @@ async function deleteValidate(req, res, next) {
 	try {
 		session = (
 			await connection.query(
-				`SELECT * FROM sessions WHERE token = $1 AND active = TRUE`,
+				`SELECT * FROM sessions WHERE token = $1 AND active = TRUE;`,
 				[token]
 			)
 		)?.rows[0];
@@ -28,7 +28,7 @@ async function deleteValidate(req, res, next) {
 	let url;
 
 	try {
-		url = (await connection.query(`SELECT * FROM urls WHERE id = $1`, [id]))
+		url = (await connection.query(`SELECT * FROM urls WHERE id = $1;`, [id]))
 			?.rows[0];
 	} catch (error) {
 		console.log(error);
