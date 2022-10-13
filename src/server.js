@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRouter from "./routes/auth.router.js";
 import urlRouter from "./routes/urls.router.js";
 import userRouter from "./routes/users.router.js";
+import rankingRouter from "./routes/ranking.router.js";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ server.use(cors());
 server.use(authRouter);
 server.use(urlRouter);
 server.use(userRouter);
+server.use(rankingRouter);
 
 server.get("/status", (req, res) => {
 	res.sendStatus(200);
