@@ -27,7 +27,23 @@ async function signUp(req, res) {
 async function signIn(req, res) {
 	const { id } = res.locals;
 
-	const token = nanoid(50);
+	let token;
+	let hasSession;
+
+	do {
+		token = nanoid(50);
+
+		try {
+			hasSession = (
+				await connection.query(`SELECT * FROM sessions WHERE token = $1;`, [
+					token,
+				])
+			)?.rows[0];
+		} catch (error) {
+			console.log(error);
+			return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		}
+	} while (hasSession);
 
 	try {
 		await connection.query(
@@ -45,7 +61,7 @@ async function signIn(req, res) {
 	res.status(STATUS_CODE.OK).send({ token });
 }
 
-async function Logout(req, res) {
+async function logout(req, res) {
 	const token = req.headers.authorization?.replace("Bearer ", "");
 
 	if (!token) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
@@ -83,4 +99,4 @@ async function Logout(req, res) {
 	res.sendStatus(STATUS_CODE.OK);
 }
 
-export { signUp, signIn, Logout };
+export { signUp, signIn, logout };
