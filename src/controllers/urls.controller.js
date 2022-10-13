@@ -5,7 +5,23 @@ import { STATUS_CODE } from "../enums/statusCode.js";
 async function createUrl(req, res) {
 	const { url, user } = res.locals;
 
-	const shortUrl = nanoid(8, url);
+	let shortUrl;
+	let hasUrl;
+
+	do {
+		shortUrl = nanoid(8, url);
+
+		try {
+			hasUrl = (
+				await connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1;`, [
+					shortUrl,
+				])
+			)?.rows[0];
+		} catch (error) {
+			console.log(error);
+			return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		}
+	} while (hasUrl);
 
 	try {
 		await connection.query(
