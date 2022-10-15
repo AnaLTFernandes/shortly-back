@@ -1,4 +1,4 @@
-import connection from "../database/db.js";
+import * as repository from "../repositories/urls.reporitory.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 async function deleteValidate(req, res, next) {
@@ -12,12 +12,7 @@ async function deleteValidate(req, res, next) {
 	let session;
 
 	try {
-		session = (
-			await connection.query(
-				`SELECT * FROM sessions WHERE token = $1 AND active = TRUE;`,
-				[token]
-			)
-		)?.rows[0];
+		session = await repository.getSessionByToken(token);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -28,8 +23,7 @@ async function deleteValidate(req, res, next) {
 	let url;
 
 	try {
-		url = (await connection.query(`SELECT * FROM urls WHERE id = $1;`, [id]))
-			?.rows[0];
+		url = await repository.getUrlById(id);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);

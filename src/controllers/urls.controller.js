@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
-import connection from "../database/db.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
+import * as repository from "../repositories/urls.reporitory.js";
 
 async function createUrl(req, res) {
 	const { url, user } = res.locals;
@@ -12,28 +12,26 @@ async function createUrl(req, res) {
 		shortUrl = nanoid(8, url);
 
 		try {
-			hasUrl = (
-				await connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1;`, [
-					shortUrl,
-				])
-			)?.rows[0];
+			hasUrl = await repository.getUrlByShortUrl(shortUrl);
 		} catch (error) {
 			console.log(error);
 			return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 		}
 	} while (hasUrl);
 
+	let result;
+
 	try {
-		await connection.query(
-			`INSERT INTO
-                urls
-            ("userId", "shortUrl", url)
-            VALUES ($1, $2, $3);`,
-			[user, shortUrl, url]
-		);
+		result = await repository.insertUrl(user, shortUrl, url);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (result.rowCount === 0) {
+		return res
+			.status(STATUS_CODE.BAD_REQUEST)
+			.send({ message: "Não foi possível criar a url." });
 	}
 
 	res.status(STATUS_CODE.CREATED).send({ shortUrl });
@@ -47,8 +45,7 @@ async function getUrl(req, res) {
 	let url;
 
 	try {
-		url = (await connection.query(`SELECT * FROM urls WHERE id = $1;`, [id]))
-			?.rows[0];
+		url = await repository.getUrlById(id);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -68,11 +65,7 @@ async function openUrl(req, res) {
 	let url;
 
 	try {
-		url = (
-			await connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1;`, [
-				shortUrl,
-			])
-		)?.rows[0];
+		url = await repository.getUrlByShortUrl(shortUrl);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -81,13 +74,7 @@ async function openUrl(req, res) {
 	if (!url) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
 	try {
-		await connection.query(
-			`INSERT INTO
-                visits
-            ("userId", "urlId")
-            VALUES ($1, $2);`,
-			[url.userId, url.id]
-		);
+		await repository.insertVisit(url.userId, url.id);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -99,11 +86,19 @@ async function openUrl(req, res) {
 async function deleteUrl(req, res) {
 	const { id } = res.locals;
 
+	let result;
+
 	try {
-		await connection.query(`DELETE FROM urls WHERE id = $1;`, [id]);
+		result = await repository.deleteUrl(id);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (result.rowCount === 0) {
+		return res
+			.status(STATUS_CODE.BAD_REQUEST)
+			.send({ message: "Não foi possível excluir a url." });
 	}
 
 	res.sendStatus(STATUS_CODE.NO_CONTENT);

@@ -1,4 +1,4 @@
-import connection from "../database/db.js";
+import * as repository from "../repositories/urls.reporitory.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 const urlRegex = new RegExp(
@@ -20,12 +20,7 @@ async function urlValidate(req, res, next) {
 	let session;
 
 	try {
-		session = (
-			await connection.query(
-				`SELECT * FROM sessions WHERE token = $1 AND active = TRUE;`,
-				[token]
-			)
-		)?.rows[0];
+		session = await repository.getSessionByToken(token);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
