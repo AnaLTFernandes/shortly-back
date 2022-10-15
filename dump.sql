@@ -183,13 +183,16 @@ ALTER TABLE ONLY public.visits ALTER COLUMN id SET DEFAULT nextval('public.visit
 -- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.sessions VALUES (12, 17, '__oxHHpc2GeJWzjz9XBPs487ZiwGKQ0KNHcBPVESbAAHqrUmiA', true, '2022-10-13 14:36:36.119077');
-INSERT INTO public.sessions VALUES (13, 16, 'Ba69uFZqHbnwlJ1Zy-9y8Un0pg0DP7TQodPGNxn7tUElUTjkTv', true, '2022-10-13 14:37:06.907093');
-INSERT INTO public.sessions VALUES (14, 15, 'TucBbQ0X3GHrubHH6PqCzFeu90dUGwQJS5DD74c3ewjdQ5uJhL', false, '2022-10-13 14:37:17.400174');
-INSERT INTO public.sessions VALUES (15, 15, 'jgm4iqPH03vMlgVGoa0aVCwgZDpukqXOcafaNbD6hEJ5qUbAc8', true, '2022-10-13 14:37:52.35334');
-INSERT INTO public.sessions VALUES (16, 14, 'rfT-eBYPLV6re03mNKqlPIOWcNqHBqKJ59v45c-JDKoCrcycCS', true, '2022-10-13 14:37:58.28745');
-INSERT INTO public.sessions VALUES (17, 18, 'qizVOLdxAsoVrrf_cfmJCvaAHNhOpH_TYCUcSWdQ1T-4UEBN0C', true, '2022-10-14 14:37:20.625483');
-INSERT INTO public.sessions VALUES (18, 20, 'KWlz4-3LWgxJjhzSkw33lYxBCDleBB2OYech2PpyePkLBWt1cX', true, '2022-10-14 14:40:49.405273');
+INSERT INTO public.sessions VALUES (20, 20, 'TwKtihc2ac0Pmzlc9nMth0SazeGWCOm0_0tDEK2Kps-D10XcXI', false, '2022-10-14 15:28:11.31277');
+INSERT INTO public.sessions VALUES (21, 20, 'Wh96WIpvWMXGibDN8b5Kg2A-M1q47k2Gi6EA31-X0r6AgBF8c9', false, '2022-10-14 15:45:25.836677');
+INSERT INTO public.sessions VALUES (22, 20, 'fEQqTkvF4s3nRO8-8tdjfUArmX_bVTHb7RVwCgmb7XIiOWqchp', false, '2022-10-14 15:54:16.15636');
+INSERT INTO public.sessions VALUES (23, 20, 'CdOJogv8z7GKLIN8W3h9Xgmf_BxOlNFfZKJPgm0yUjYwCymsmu', false, '2022-10-14 18:33:20.503061');
+INSERT INTO public.sessions VALUES (24, 20, 'bHU38B7xdOH76ZlL1MANw2KsRFm4UbxJM8UovbIbQbDbtggvsQ', false, '2022-10-14 18:35:58.447722');
+INSERT INTO public.sessions VALUES (26, 21, 'K9AYOiLKCkxYVLH2Qb_DfEWrwi9ZMOOTM6lm-AOUFKIK83rqEE', false, '2022-10-15 14:36:37.035356');
+INSERT INTO public.sessions VALUES (27, 21, 'FkKlXjxYCcYVWCzriwV2nMUEn1FO1VrHBW4DrEAaq6fm8XzASM', false, '2022-10-15 14:44:24.258655');
+INSERT INTO public.sessions VALUES (28, 21, 'fEv25-yjMpC5TGDeV8LkEjhFZUIbgaK3G5rq35kK6L7YkPR0eE', false, '2022-10-15 14:55:13.525945');
+INSERT INTO public.sessions VALUES (25, 20, 'vu2ughOLT1bgRW86TcOMWT8VLa5QbPOKM0tYhtfL1mYz4H53J2', false, '2022-10-14 22:52:35.951977');
+INSERT INTO public.sessions VALUES (29, 20, '38CORSHwRm0TPuPzoGCG1hdI9kJjbpRxKEiFRdGFL5HXbVHo9t', true, '2022-10-15 14:59:34.747264');
 
 
 --
@@ -200,6 +203,9 @@ INSERT INTO public.urls VALUES (25, 17, 'Zvr9GpiH', 'https://www.youtube.com', '
 INSERT INTO public.urls VALUES (26, 17, 'iR2l9JbN', 'https://www.google.com', '2022-10-13 14:42:24.718125');
 INSERT INTO public.urls VALUES (27, 17, 'xrHe1_z-', 'https://www.trello.com', '2022-10-13 14:43:10.591917');
 INSERT INTO public.urls VALUES (28, 15, 'kotXnpm2', 'https://www.linkedin.com/in/analtfernandes/', '2022-10-13 14:44:28.543051');
+INSERT INTO public.urls VALUES (31, 20, 'sTGEsYV7', 'https://projeto10-trackit-analtfernandes.vercel.app/', '2022-10-14 21:57:35.791153');
+INSERT INTO public.urls VALUES (32, 20, '0jfpZowq', 'https://uibakery.io/regex-library/url', '2022-10-14 21:59:56.591299');
+INSERT INTO public.urls VALUES (33, 20, 'HuSJn_Yw', 'https://university.mongodb.com/courses/catalog?focus=Developer%20Courses', '2022-10-14 22:53:36.434411');
 
 
 --
@@ -211,8 +217,8 @@ INSERT INTO public.users VALUES (15, 'Kira', 'deusdonovomundo@me.com', '$2b$13$U
 INSERT INTO public.users VALUES (16, 'Anabel', 'eumesma@me.com', '$2b$13$/LbKHyKAhHtNAmAjQMx7fuMQiJ5dCQiuHkiWthug9QZyOZZEAVI02', '2022-10-13 14:35:39.985249');
 INSERT INTO public.users VALUES (17, 'Timothy', 'sigaocoelhobranco@mail.com', '$2b$13$wo/qANrp5qciPmz1qsFcgOQ65dP20PxKSgh4D5XVdvQwM/Hg2gxFG', '2022-10-13 14:36:09.132348');
 INSERT INTO public.users VALUES (18, 'Dante', 'eu@gmail.com', '$2b$13$pSBXB4LSRyxdbDQ6NA9YbuM7G18425dkYIefXiua49JsJC0m9ucyq', '2022-10-14 14:03:23.011804');
-INSERT INTO public.users VALUES (19, 'Dante', 'outroeu@gmail.com', '$2b$13$ngaJo4e.qPzH4tNujm3roOilFmzxFBltPcrkPXqGJx2fJftm/gusK', '2022-10-14 14:08:55.166768');
 INSERT INTO public.users VALUES (20, 'Noah', 'noah@me.com', '$2b$13$vv3G5pUU0OaBzupGlXN43uL9GcFriOGP/wV.SZVv5.u48wtaWW51y', '2022-10-14 14:40:27.219245');
+INSERT INTO public.users VALUES (21, 'Roberta Pascal', 'ropasc@mail.com', '$2b$13$cQn1VB.0JsZtLikb5YzzU.GaAndml/eiuemrbt/5yIUIbrO52Yb3C', '2022-10-15 14:19:16.124163');
 
 
 --
@@ -258,34 +264,37 @@ INSERT INTO public.visits VALUES (46, 15, 28, '2022-10-13 14:44:55.927636');
 INSERT INTO public.visits VALUES (47, 15, 28, '2022-10-13 14:44:57.243223');
 INSERT INTO public.visits VALUES (48, 15, 28, '2022-10-13 14:44:58.288858');
 INSERT INTO public.visits VALUES (49, 15, 28, '2022-10-13 14:45:00.498223');
+INSERT INTO public.visits VALUES (52, 17, 25, '2022-10-15 13:32:34.696677');
+INSERT INTO public.visits VALUES (53, 17, 25, '2022-10-15 13:35:32.534353');
+INSERT INTO public.visits VALUES (54, 17, 25, '2022-10-15 13:36:38.65007');
 
 
 --
 -- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.sessions_id_seq', 18, true);
+SELECT pg_catalog.setval('public.sessions_id_seq', 29, true);
 
 
 --
 -- Name: urls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.urls_id_seq', 28, true);
+SELECT pg_catalog.setval('public.urls_id_seq', 35, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 20, true);
+SELECT pg_catalog.setval('public.users_id_seq', 21, true);
 
 
 --
 -- Name: visits_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.visits_id_seq', 49, true);
+SELECT pg_catalog.setval('public.visits_id_seq', 54, true);
 
 
 --

@@ -1,5 +1,5 @@
 import * as repository from "../repositories/auth.repository.js";
-import { STATUS_CODE } from "../enums/statusCode.js";
+import * as responseHelper from "../helpers/response.helper.js";
 import validateFields from "./validateFields.js";
 
 async function signUpValidate(req, res, next) {
@@ -10,21 +10,20 @@ async function signUpValidate(req, res, next) {
 	const validation = validateFields(data, "userSchema");
 
 	if (validation.error) {
-		return res
-			.status(STATUS_CODE.UNPROCESSABLE_ENTITY)
-			.send({ message: validation.error });
+		return responseHelper.unprocessableEntity(
+			{ message: validation.error },
+			res
+		);
 	}
 
 	try {
 		const hasEmail = await repository.getUserByEmail(email);
 
 		if (hasEmail)
-			return res
-				.status(STATUS_CODE.CONFLICT)
-				.send({ message: "Usuário já existe." });
+			return responseHelper.conflict({ message: "Usuário já existe." }, res);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	res.locals.body = data;

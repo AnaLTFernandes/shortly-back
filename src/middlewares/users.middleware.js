@@ -1,10 +1,10 @@
 import * as repository from "../repositories/users.repository.js";
-import { STATUS_CODE } from "../enums/statusCode.js";
+import * as responseHelper from "../helpers/response.helper.js";
 
 async function validateUser(req, res, next) {
 	const token = req.headers.authorization?.replace("Bearer ", "");
 
-	if (!token) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
+	if (!token) return responseHelper.unauthorized("", res);
 
 	let session;
 
@@ -12,10 +12,10 @@ async function validateUser(req, res, next) {
 		session = await repository.getActiveSession(token);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
-	if (!session) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
+	if (!session) return responseHelper.unauthorized("", res);
 
 	let user;
 
@@ -23,10 +23,10 @@ async function validateUser(req, res, next) {
 		user = await repository.getUserData(session.userId);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
-	if (!user) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+	if (!user) return responseHelper.notFound("", res);
 
 	res.locals.user = user;
 

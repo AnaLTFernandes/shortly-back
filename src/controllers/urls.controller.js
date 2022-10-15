@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import * as repository from "../repositories/urls.reporitory.js";
+import * as responseHelper from "../helpers/response.helper.js";
 
 async function createUrl(req, res) {
 	const { url, user } = res.locals;
@@ -15,7 +16,7 @@ async function createUrl(req, res) {
 			hasUrl = await repository.getUrlByShortUrl(shortUrl);
 		} catch (error) {
 			console.log(error);
-			return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+			return responseHelper.serverError("", res);
 		}
 	} while (hasUrl);
 
@@ -25,22 +26,23 @@ async function createUrl(req, res) {
 		result = await repository.insertUrl(user, shortUrl, url);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	if (result.rowCount === 0) {
-		return res
-			.status(STATUS_CODE.BAD_REQUEST)
-			.send({ message: "Não foi possível criar a url." });
+		return responseHelper.badRequest(
+			{ message: "Não foi possível criar a url." },
+			res
+		);
 	}
 
-	res.status(STATUS_CODE.CREATED).send({ shortUrl });
+	responseHelper.created({ shortUrl }, res);
 }
 
 async function getUrl(req, res) {
 	const { id } = req.params;
 
-	if (isNaN(id)) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+	if (isNaN(id)) return responseHelper.badRequest("", res);
 
 	let url;
 
@@ -48,15 +50,15 @@ async function getUrl(req, res) {
 		url = await repository.getUrlById(id);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
-	if (!url) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+	if (!url) return responseHelper.notFound("", res);
 
 	delete url.userId;
 	delete url.createdAt;
 
-	res.status(STATUS_CODE.OK).send(url);
+	responseHelper.ok(url, res);
 }
 
 async function openUrl(req, res) {
@@ -68,16 +70,16 @@ async function openUrl(req, res) {
 		url = await repository.getUrlByShortUrl(shortUrl);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
-	if (!url) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+	if (!url) return responseHelper.notFound("", res);
 
 	try {
 		await repository.insertVisit(url.userId, url.id);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	res.redirect(url.url);
@@ -92,16 +94,17 @@ async function deleteUrl(req, res) {
 		result = await repository.deleteUrl(id);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	if (result.rowCount === 0) {
-		return res
-			.status(STATUS_CODE.BAD_REQUEST)
-			.send({ message: "Não foi possível excluir a url." });
+		return responseHelper.badRequest(
+			{ message: "Não foi possível excluir a url." },
+			res
+		);
 	}
 
-	res.sendStatus(STATUS_CODE.NO_CONTENT);
+	responseHelper.noContent("", res);
 }
 
 export { createUrl, getUrl, openUrl, deleteUrl };

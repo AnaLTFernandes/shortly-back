@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import * as repository from "../repositories/auth.repository.js";
-import { STATUS_CODE } from "../enums/statusCode.js";
+import * as responseHelper from "../helpers/response.helper.js";
 import validateFields from "./validateFields.js";
 
 async function signInValidate(req, res, next) {
@@ -11,9 +11,10 @@ async function signInValidate(req, res, next) {
 	const validation = validateFields(data, "loginSchema");
 
 	if (validation.error) {
-		return res
-			.status(STATUS_CODE.UNPROCESSABLE_ENTITY)
-			.send({ message: validation.error });
+		return responseHelper.unprocessableEntity(
+			{ message: validation.error },
+			res
+		);
 	}
 
 	let user;
@@ -22,30 +23,32 @@ async function signInValidate(req, res, next) {
 		user = await repository.getUserByEmail(email);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	if (!user) {
-		return res
-			.status(STATUS_CODE.UNAUTHORIZED)
-			.send({ message: "Email ou senha inválida." });
+		return responseHelper.unauthorized(
+			{ message: "Email ou senha inválida." },
+			res
+		);
 	}
 
 	const isPasswordValid = bcrypt.compareSync(password, user.password);
 
 	if (!isPasswordValid) {
-		return res
-			.status(STATUS_CODE.UNAUTHORIZED)
-			.send({ message: "Email ou senha inválida." });
+		return responseHelper.unauthorized(
+			{ message: "Email ou senha inválida." },
+			res
+		);
 	}
 
 	try {
 		const hasActiveSession = await repository.getActiveSessionFromUser(user.id);
 
-		if (hasActiveSession) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+		if (hasActiveSession) return responseHelper.badRequest("", res);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	res.locals.id = user.id;

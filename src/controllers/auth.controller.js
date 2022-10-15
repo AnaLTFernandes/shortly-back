@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 import * as repository from "../repositories/auth.repository.js";
-import { STATUS_CODE } from "../enums/statusCode.js";
+import * as responseHelper from "../helpers/response.helper.js";
 
 async function signUp(req, res) {
 	const { name, email, password } = res.locals.body;
@@ -14,16 +14,17 @@ async function signUp(req, res) {
 		result = await repository.insertUser(name, email, passwordHash);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	if (result.rowCount === 0) {
-		return res
-			.status(STATUS_CODE.BAD_REQUEST)
-			.send({ message: "Não foi possível criar usuário." });
+		return responseHelper.badRequest(
+			{ message: "Não foi possível criar usuário." },
+			res
+		);
 	}
 
-	res.sendStatus(STATUS_CODE.CREATED);
+	responseHelper.created("", res);
 }
 
 async function signIn(req, res) {
@@ -39,7 +40,7 @@ async function signIn(req, res) {
 			hasSession = await repository.getSessionByToken(token);
 		} catch (error) {
 			console.log(error);
-			return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+			return responseHelper.serverError("", res);
 		}
 	} while (hasSession);
 
@@ -49,22 +50,23 @@ async function signIn(req, res) {
 		result = await repository.insertToken(id, token);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	if (result.rowCount === 0) {
-		return res
-			.status(STATUS_CODE.BAD_REQUEST)
-			.send({ message: "Não foi possível fazer o login." });
+		return responseHelper.badRequest(
+			{ message: "Não foi possível fazer o login." },
+			res
+		);
 	}
 
-	res.status(STATUS_CODE.OK).send({ token });
+	responseHelper.ok({ token }, res);
 }
 
 async function logout(req, res) {
 	const token = req.headers.authorization?.replace("Bearer ", "");
 
-	if (!token) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
+	if (!token) return responseHelper.unauthorized("", res);
 
 	let session;
 
@@ -72,10 +74,10 @@ async function logout(req, res) {
 		session = await repository.getActiveSessionByToken(token);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
-	if (!session) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
+	if (!session) return responseHelper.unauthorized("", res);
 
 	let result;
 
@@ -83,16 +85,17 @@ async function logout(req, res) {
 		result = await repository.finishSession(session.token);
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
 	if (result.rowCount === 0) {
-		return res
-			.status(STATUS_CODE.BAD_REQUEST)
-			.send({ message: "Não foi possível finalizar sessão." });
+		return responseHelper.badRequest(
+			{ message: "Não foi possível finalizar sessão." },
+			res
+		);
 	}
 
-	res.sendStatus(STATUS_CODE.OK);
+	responseHelper.ok("", res);
 }
 
 export { signUp, signIn, logout };

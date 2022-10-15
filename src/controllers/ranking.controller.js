@@ -1,5 +1,5 @@
 import * as repository from "../repositories/ranking.repository.js";
-import { STATUS_CODE } from "../enums/statusCode.js";
+import * as responseHelper from "../helpers/response.helper.js";
 
 async function getRanking(req, res) {
 	let ranking;
@@ -8,10 +8,10 @@ async function getRanking(req, res) {
 		ranking = await repository.getRanking();
 	} catch (error) {
 		console.log(error);
-		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+		return responseHelper.serverError("", res);
 	}
 
-	res.status(STATUS_CODE.OK).send(ranking);
+	responseHelper.ok(ranking, res);
 }
 
 export { getRanking };
