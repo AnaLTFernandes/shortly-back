@@ -1,4 +1,4 @@
-import connection from "../database/db.js";
+import * as repository from "../repositories/auth.repository.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import validateFields from "./validateFields.js";
 
@@ -16,12 +16,9 @@ async function signUpValidate(req, res, next) {
 	}
 
 	try {
-		const hasEmail = await connection.query(
-			`SELECT * FROM users WHERE email = $1;`,
-			[email]
-		);
+		const hasEmail = await repository.getUserByEmail(email);
 
-		if (hasEmail.rows[0])
+		if (hasEmail)
 			return res
 				.status(STATUS_CODE.CONFLICT)
 				.send({ message: "Usuário já existe." });

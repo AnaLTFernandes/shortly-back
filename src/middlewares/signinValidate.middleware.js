@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import connection from "../database/db.js";
+import * as repository from "../repositories/auth.repository.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 import validateFields from "./validateFields.js";
 
@@ -19,9 +19,7 @@ async function signInValidate(req, res, next) {
 	let user;
 
 	try {
-		user = (
-			await connection.query(`SELECT * FROM users WHERE email = $1;`, [email])
-		)?.rows[0];
+		user = await repository.getUserByEmail(email);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -42,14 +40,7 @@ async function signInValidate(req, res, next) {
 	}
 
 	try {
-		const hasActiveSession = (
-			await connection.query(
-				`SELECT * FROM sessions
-                WHERE active = TRUE
-                    AND "userId" = $1;`,
-				[user.id]
-			)
-		)?.rows[0];
+		const hasActiveSession = await repository.getActiveSessionFromUser(user.id);
 
 		if (hasActiveSession) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
 	} catch (error) {

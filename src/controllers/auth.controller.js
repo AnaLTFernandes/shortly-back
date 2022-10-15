@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
-import connection from "../database/db.js";
+import * as repository from "../repositories/auth.repository.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 async function signUp(req, res) {
@@ -8,17 +8,19 @@ async function signUp(req, res) {
 
 	const passwordHash = bcrypt.hashSync(password, 13);
 
+	let result;
+
 	try {
-		await connection.query(
-			`INSERT INTO
-                users
-            (name, email, password)
-            VALUES ($1, $2, $3);`,
-			[name, email, passwordHash]
-		);
+		result = await repository.insertUser(name, email, passwordHash);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (result.rowCount === 0) {
+		return res
+			.status(STATUS_CODE.BAD_REQUEST)
+			.send({ message: "Não foi possível criar usuário." });
 	}
 
 	res.sendStatus(STATUS_CODE.CREATED);
@@ -34,28 +36,26 @@ async function signIn(req, res) {
 		token = nanoid(50);
 
 		try {
-			hasSession = (
-				await connection.query(`SELECT * FROM sessions WHERE token = $1;`, [
-					token,
-				])
-			)?.rows[0];
+			hasSession = await repository.getSessionByToken(token);
 		} catch (error) {
 			console.log(error);
 			return res.sendStatus(STATUS_CODE.SERVER_ERROR);
 		}
 	} while (hasSession);
 
+	let result;
+
 	try {
-		await connection.query(
-			`INSERT INTO
-                sessions
-            ("userId", token)
-            VALUES ($1, $2);`,
-			[id, token]
-		);
+		result = await repository.insertToken(id, token);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (result.rowCount === 0) {
+		return res
+			.status(STATUS_CODE.BAD_REQUEST)
+			.send({ message: "Não foi possível fazer o login." });
 	}
 
 	res.status(STATUS_CODE.OK).send({ token });
@@ -69,16 +69,7 @@ async function logout(req, res) {
 	let session;
 
 	try {
-		session = (
-			await connection.query(
-				`SELECT
-                    *
-                FROM sessions
-                WHERE token = $1
-                    AND active = TRUE;`,
-				[token]
-			)
-		)?.rows[0];
+		session = await repository.getActiveSessionByToken(token);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
@@ -86,14 +77,19 @@ async function logout(req, res) {
 
 	if (!session) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
 
+	let result;
+
 	try {
-		await connection.query(
-			`UPDATE sessions SET active = FALSE WHERE token = $1;`,
-			[session.token]
-		);
+		result = await repository.finishSession(session.token);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+
+	if (result.rowCount === 0) {
+		return res
+			.status(STATUS_CODE.BAD_REQUEST)
+			.send({ message: "Não foi possível finalizar sessão." });
 	}
 
 	res.sendStatus(STATUS_CODE.OK);
