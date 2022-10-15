@@ -13,7 +13,7 @@ async function getUserData(req, res) {
                     u.id, u."shortUrl", u.url,
                     COUNT(v."urlId") AS "visitCount"
                 FROM urls u
-                JOIN visits v
+                LEFT JOIN visits v
                     ON u.id = v."urlId"
                 WHERE u."userId" = $1
                 GROUP BY v."urlId", u.id

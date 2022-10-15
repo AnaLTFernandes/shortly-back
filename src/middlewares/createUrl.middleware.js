@@ -2,7 +2,7 @@ import connection from "../database/db.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 const urlRegex = new RegExp(
-	/^https?:\/\/(?:www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+	/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
 );
 
 async function urlValidate(req, res, next) {
