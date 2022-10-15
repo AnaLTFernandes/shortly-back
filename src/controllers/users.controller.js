@@ -1,4 +1,4 @@
-import connection from "../database/db.js";
+import * as repository from "../repositories/users.repository.js";
 import { STATUS_CODE } from "../enums/statusCode.js";
 
 async function getUserData(req, res) {
@@ -7,20 +7,7 @@ async function getUserData(req, res) {
 	let data = { ...user };
 
 	try {
-		data.shortenedUrls = (
-			await connection.query(
-				`SELECT
-                    u.id, u."shortUrl", u.url,
-                    COUNT(v."urlId") AS "visitCount"
-                FROM urls u
-                LEFT JOIN visits v
-                    ON u.id = v."urlId"
-                WHERE u."userId" = $1
-                GROUP BY v."urlId", u.id
-                ORDER BY u.id;`,
-				[user.id]
-			)
-		)?.rows;
+		data.shortenedUrls = await repository.getUserUrls(user.id);
 	} catch (error) {
 		console.log(error);
 		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
