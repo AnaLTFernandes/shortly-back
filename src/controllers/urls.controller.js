@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { STATUS_CODE } from "../enums/statusCode.js";
 import * as repository from "../repositories/urls.reporitory.js";
 import * as responseHelper from "../helpers/response.helper.js";
 
@@ -107,4 +106,17 @@ async function deleteUrl(req, res) {
 	responseHelper.noContent("", res);
 }
 
-export { createUrl, getUrl, openUrl, deleteUrl };
+async function getUrls(req, res) {
+	let urls;
+
+	try {
+		urls = await repository.getUrls();
+	} catch (error) {
+		console.log(error);
+		return responseHelper.serverError("", res);
+	}
+
+	responseHelper.ok(urls, res);
+}
+
+export { createUrl, getUrls, getUrl, openUrl, deleteUrl };

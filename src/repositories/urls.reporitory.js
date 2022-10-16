@@ -53,6 +53,14 @@ async function getSessionByToken(token) {
 	return response;
 }
 
+async function getUrls() {
+	const response = (
+		await connection.query(`SELECT id, url FROM urls;`)
+	).rows;
+
+	return response;
+}
+
 export {
 	getUrlById,
 	getUrlByShortUrl,
@@ -60,4 +68,5 @@ export {
 	deleteUrl,
 	insertUrl,
 	getSessionByToken,
+	getUrls,
 };
