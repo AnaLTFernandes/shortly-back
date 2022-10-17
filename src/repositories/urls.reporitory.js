@@ -55,7 +55,7 @@ async function getSessionByToken(token) {
 
 async function getUrls() {
 	const response = (
-		await connection.query(`SELECT id, url FROM urls;`)
+		await connection.query(`SELECT id, url FROM urls ORDER BY id DESC;`)
 	).rows;
 
 	return response;
